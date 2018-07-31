@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var cors = require('cors');
 var request =  require('request');
+var fs = require('fs');
 var json2csv = require('json2csv').parse;
 var fields = ['sku','qty'];
 var app = express();
@@ -37,7 +38,15 @@ var finaljsondata = rawdatainjson.map(({sku, qty}) => ({sku, qty}));
  const opts = { fields };
 try {
   const csv = json2csv(finaljsondata, opts);
-  res.send(csv);
+/*  fs.writeFile('file.csv', csv, function(err) {
+    if (err) throw err;
+    console.log('file saved');
+  }); */
+
+  res.setHeader('Content-disposition', 'attachment; filename=data.csv');
+    res.set('Content-Type', 'text/csv');
+    res.status(200).send(csv);
+
 } catch (err) {
   console.error(err);
 
